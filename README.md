@@ -62,6 +62,29 @@ Comandos usados por los scripts:
 - `psql -d waterways ...`
 - `ogr2ogr ... PG:"dbname=waterways" ...`
 
+### Autenticación local `peer` (sin clave)
+
+Si PostgreSQL está configurado con método `peer` para conexiones locales
+(`local` en `pg_hba.conf`):
+
+- No necesitas `PGPASSWORD`.
+- PostgreSQL toma como usuario el usuario Linux que ejecuta el script (por
+  ejemplo, `geoserver`).
+- Debe existir un rol con ese mismo nombre en PostgreSQL. Si no existe,
+  aparecerá un error como: `FATAL: role "geoserver" does not exist`.
+
+Crear el rol (sin password) para usar `peer`:
+
+```bash
+sudo -u postgres createuser geoserver
+```
+
+Prueba de conexión con `peer` (ejecutando como usuario Linux `geoserver`):
+
+```bash
+psql -d waterways -c "SELECT current_user, current_database();"
+```
+
 ### Configuración recomendada de PostgreSQL
 
 1. Crear la base de datos:
@@ -125,6 +148,9 @@ PGDATABASE=waterways
 PGUSER=geoserver
 PGPASSWORD=change_me
 ```
+
+Nota: con autenticación `peer`, normalmente no necesitas estas variables; son
+útiles si cambias a autenticación por contraseña (`md5` o `scram-sha-256`).
 
 ## Uso desde GeoServer (WMS)
 

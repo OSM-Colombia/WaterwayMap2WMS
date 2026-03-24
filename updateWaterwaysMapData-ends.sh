@@ -21,6 +21,6 @@ rm -f -- ./*.geojson ./*.geojson.gz
 wget -nv "${URL}" -O "${GZ_FILE}"
 gunzip -f "${GZ_FILE}"
 psql -v ON_ERROR_STOP=1 -d waterways -c "DROP TABLE IF EXISTS planet_ends"
-ogr2ogr -f "PostgreSQL" PG:"dbname=waterways" "${DATA_FILE}" -nln planet_ends -append
+ogr2ogr --config OGR_PG_ENABLE_METADATA NO -f "PostgreSQL" PG:"dbname=waterways" "${DATA_FILE}" -nln planet_ends -append
 
 rm -f -- "${DATA_FILE}"
